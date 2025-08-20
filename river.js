@@ -5,7 +5,7 @@ async function fetchRiverLevel() {
   try {
     const url = 'http://apis.data.go.kr/6260000/BusanRvrwtLevelInfoService/getRvrwtLevelInfo';
     const params = {
-            serviceKey:"CUgAdYOLCfoqKexlPeZVx03VXdUx2BkGpmIF0hjRMyUix4QJjJZ21TjP38Xy1IJy27nP06/ETwOGxfX5TEs+tw==", // 서비스키도 .env에 넣는 게 안전해요
+            serviceKey:process.env.SERVICE_KEY, 
       pageNo: 2,
       numOfRows: 10,
       resultType: 'json',
