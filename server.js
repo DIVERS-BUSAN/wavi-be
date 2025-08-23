@@ -31,7 +31,7 @@ app.post("/rag", async (req, res) => {
     }
     console.log("RAG호출");
     // Python API 호출
-    const response = await fetch("http://13.125.137.19:5000/search", {
+    const response = await fetch("http://52.79.194.171:5000/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message }),
