@@ -21,6 +21,54 @@ app.get('/users', async (req, res) => {
   }
 });
 
+//RAG기능 구현
+app.post("/rag", async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ error: "message 값이 필요합니다." });
+    }
+    console.log("RAG호출");
+    // Python API 호출
+    const response = await fetch("http://13.125.137.19:5000/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+    });
+    const data = await response.json();
+
+    // OpenAI API 호출 (GPT에게 context + user question 전달)
+    const completion = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: "너는 부산 관광 가이드야. context 기반으로만 답변해." },
+          { role: "user", content: `질문: ${message}\n\n참고정보: ${data.context}` }
+        ],
+        max_tokens: 500,
+        temperature: 0.7
+      })
+    });
+
+    const gpt = await completion.json();
+    const answer = gpt.choices?.[0]?.message?.content || "답변을 생성할 수 없습니다.";
+
+    res.json({
+      context: data.context,
+      answer
+    });
+
+  } catch (error) {
+    console.error("RAG 서버 오류:", error);
+    res.status(500).json({ error: "서버 오류 발생" });
+  }
+});
 
 // 하천 수위 데이터 최신화
 app.get('/river/update', async (req, res) => {
@@ -179,3 +227,4 @@ async function init() {
 }                                                                                                                                
                                                                                                                                  
 init(); 
+
