@@ -109,7 +109,10 @@ def rag_search():
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "너는 부산광역시 관광 안내 AI 비서이다. 아래 참고 문서를 기반으로만 대답하라."},
+            {"role": "system", "content": '''너는 부산광역시 관광 안내 AI 비서이다. 아래 참고 문서를 기반으로만 대답하라.
+             출력물의 형식은 다음과 같다.
+             1. 참고문서를 기반으로 여러 정보를 출력하되, 리스트형식으로 출력할것.
+             2. 참고문서외에 부산광역시 내의 추가적인 정보를 필요시 출력할것.'''},
             {"role": "user", "content": f"사용자 질문: {query}\n\n참고 문서:\n{context_texts}"}
         ],
         max_tokens=500,
@@ -127,4 +130,3 @@ def rag_search():
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
     print("서버실행중")
-
